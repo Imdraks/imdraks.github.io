@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pour toi</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ffd6e7, #ffeef5);
+      min-height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 40px 30px;
+      border-radius: 24px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+      text-align: center;
+      width: min(92%, 650px);
+      position: relative;
+    }
+
+    h1 {
+      margin: 0 0 15px;
+      font-size: 2rem;
+      color: #222;
+    }
+
+    .subtitle {
+      margin: 0 0 30px;
+      color: #666;
+      font-size: 1rem;
+    }
+
+    .buttons {
+      position: relative;
+      height: 240px;
+    }
+
+    button {
+      border: none;
+      padding: 14px 30px;
+      font-size: 1.1rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+      position: absolute;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    #yesBtn {
+      left: 34%;
+      top: 90px;
+      background: #ff4d8d;
+      color: white;
+      box-shadow: 0 8px 20px rgba(255, 77, 141, 0.3);
+    }
+
+    #noBtn {
+      left: 55%;
+      top: 90px;
+      background: #f3f3f3;
+      color: #333;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      transform-origin: center;
+    }
+
+    .message {
+      margin-top: 24px;
+      font-size: 1.15rem;
+      font-weight: bold;
+      color: #ff2f7d;
+      min-height: 32px;
+    }
+
+    .final-screen {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .final-screen h2 {
+      margin: 0 0 10px;
+      color: #ff2f7d;
+      font-size: 2rem;
+    }
+
+    .final-screen p {
+      margin: 0;
+      color: #444;
+      font-size: 1.1rem;
+      line-height: 1.5;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div id="questionScreen">
+      <h1>Est-ce que tu veux sortir avec moi ?</h1>
+      <p class="subtitle">Réfléchis bien avant de répondre 😌</p>
+
+      <div class="buttons" id="playArea">
+        <button id="yesBtn">Oui</button>
+        <button id="noBtn">Non</button>
+      </div>
+
+      <div class="message" id="message"></div>
+    </div>
+
+    <div class="final-screen" id="finalScreen">
+      <h2>Trop bien ❤️</h2>
+      <p>Je t’écris très vite pour organiser ça.</p>
+    </div>
+  </div>
+
+  <script>
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const playArea = document.getElementById("playArea");
+    const message = document.getElementById("message");
+    const questionScreen = document.getElementById("questionScreen");
+    const finalScreen = document.getElementById("finalScreen");
+
+    // Remplace par ton topic ntfy
+    const NTFY_TOPIC = "ayman-date-4k9x2m7p-heart-2026";
+
+    let alreadySent = false;
+    let noScale = 1;
+    let noClickCount = 0;
+
+    function moveNoButton() {
+      const areaRect = playArea.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+
+      const maxX = areaRect.width - btnRect.width;
+      const maxY = areaRect.height - btnRect.height;
+
+      const randomX = Math.max(0, Math.random() * maxX);
+      const randomY = Math.max(0, Math.random() * maxY);
+
+      noBtn.style.left = `${randomX}px`;
+      noBtn.style.top = `${randomY}px`;
+    }
+
+    function shrinkNoButton() {
+      noClickCount++;
+
+      noScale = Math.max(0.18, 1 - noClickCount * 0.12);
+      noBtn.style.transform = `scale(${noScale})`;
+
+      const fontSize = Math.max(0.55, 1.1 - noClickCount * 0.08);
+      noBtn.style.fontSize = `${fontSize}rem`;
+
+      const padY = Math.max(4, 14 - noClickCount * 1.4);
+      const padX = Math.max(8, 30 - noClickCount * 2.5);
+      noBtn.style.padding = `${padY}px ${padX}px`;
+    }
+
+    noBtn.addEventListener("pointerdown", (e) => {
+      e.preventDefault();
+      shrinkNoButton();
+      moveNoButton();
+    });
+
+    noBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      moveNoButton();
+    });
+
+    noBtn.addEventListener("focus", () => {
+      noBtn.blur();
+      shrinkNoButton();
+      moveNoButton();
+    });
+
+    yesBtn.addEventListener("click", async () => {
+      if (alreadySent) return;
+      alreadySent = true;
+
+      message.textContent = "Excellent choix 😌";
+
+      try {
+        await fetch(`https://ntfy.sh/${NTFY_TOPIC}`, {
+          method: "POST",
+          headers: {
+            "Title": "Elle a cliqué sur Oui",
+            "Priority": "urgent",
+            "Tags": "heart"
+          },
+          body: `Le bouton Oui a été cliqué le ${new Date().toLocaleString("fr-FR")}.`
+        });
+      } catch (err) {
+        console.error("Erreur notif :", err);
+      }
+
+      setTimeout(() => {
+        questionScreen.style.display = "none";
+        finalScreen.style.display = "block";
+      }, 600);
+    });
+  </script>
+</body>
+</html>
