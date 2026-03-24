@@ -2,28 +2,23 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-  />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pour toi</title>
   <meta name="robots" content="noindex, nofollow" />
+
+  <!-- LIB CONFETTI -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
   <style>
     * {
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
     }
 
-    html, body {
+    body {
       margin: 0;
-      padding: 0;
-      width: 100%;
-      min-height: 100%;
       font-family: Arial, sans-serif;
       background: linear-gradient(135deg, #ffd6e7, #ffeef5);
-    }
-
-    body {
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -35,249 +30,157 @@
     .card {
       width: 100%;
       max-width: 420px;
-      background: #ffffff;
+      background: #fff;
       border-radius: 24px;
       box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
-      padding: 28px 20px 24px;
+      padding: 28px 20px;
       text-align: center;
-      position: relative;
     }
 
     h1 {
-      margin: 0 0 12px;
-      font-size: clamp(1.7rem, 5vw, 2.1rem);
-      line-height: 1.2;
-      color: #222;
+      margin-bottom: 10px;
+      font-size: 1.9rem;
     }
 
     .subtitle {
-      margin: 0 0 24px;
       color: #666;
-      font-size: 0.98rem;
-      line-height: 1.4;
+      margin-bottom: 25px;
     }
 
     .buttons {
       position: relative;
-      height: 260px;
-      width: 100%;
-      margin: 0 auto;
-      overflow: hidden;
-      border-radius: 18px;
+      height: 240px;
     }
 
     button {
       position: absolute;
       border: none;
       border-radius: 999px;
-      font-size: 1rem;
-      font-weight: 600;
       padding: 14px 26px;
-      min-width: 92px;
-      min-height: 48px;
+      font-size: 1rem;
       cursor: pointer;
-      user-select: none;
-      white-space: nowrap;
-      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
-      touch-action: manipulation;
     }
 
     #yesBtn {
-      left: 18%;
-      top: 95px;
+      left: 20%;
+      top: 100px;
       background: #ff4d8d;
       color: white;
-      box-shadow: 0 8px 20px rgba(255, 77, 141, 0.3);
-      z-index: 1;
     }
 
     #noBtn {
-      left: 58%;
-      top: 95px;
-      background: #f3f3f3;
-      color: #333;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-      transform-origin: center center;
-      z-index: 2;
-    }
-
-    .message {
-      margin-top: 18px;
-      min-height: 28px;
-      font-size: 1rem;
-      font-weight: bold;
-      color: #ff2f7d;
+      left: 60%;
+      top: 100px;
+      background: #eee;
     }
 
     .final-screen {
       display: none;
-      animation: fadeIn 0.35s ease;
     }
 
     .final-screen h2 {
-      margin: 0 0 10px;
       color: #ff2f7d;
-      font-size: clamp(1.8rem, 5vw, 2.2rem);
-    }
-
-    .final-screen p {
-      margin: 0;
-      color: #444;
-      font-size: 1rem;
-      line-height: 1.5;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @media (max-width: 380px) {
-      .card {
-        padding: 24px 16px 20px;
-      }
-
-      .buttons {
-        height: 240px;
-      }
-
-      button {
-        font-size: 0.95rem;
-        padding: 12px 22px;
-        min-width: 84px;
-      }
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div id="questionScreen">
-      <h1>Est-ce que tu veux sortir avec moi ?</h1>
-      <p class="subtitle">Réfléchis bien avant de répondre 😌</p>
 
-      <div class="buttons" id="playArea">
-        <button id="yesBtn" type="button">Oui</button>
-        <button id="noBtn" type="button">Non</button>
-      </div>
+<div class="card">
+  <div id="questionScreen">
+    <h1>Est-ce que tu veux sortir avec moi ?</h1>
+    <p class="subtitle">Réfléchis bien 😌</p>
 
-      <div class="message" id="message"></div>
-    </div>
-
-    <div class="final-screen" id="finalScreen">
-      <h2>Trop bien ❤️</h2>
-      <p>Je t’écris très vite pour organiser ça.</p>
+    <div class="buttons" id="playArea">
+      <button id="yesBtn">Oui</button>
+      <button id="noBtn">Non</button>
     </div>
   </div>
 
-  <script>
-    const noBtn = document.getElementById("noBtn");
-    const yesBtn = document.getElementById("yesBtn");
-    const playArea = document.getElementById("playArea");
-    const message = document.getElementById("message");
-    const questionScreen = document.getElementById("questionScreen");
-    const finalScreen = document.getElementById("finalScreen");
+  <div class="final-screen" id="finalScreen">
+    <h2>Trop bien ❤️</h2>
+    <p>Je t’écris très vite 😌</p>
+  </div>
+</div>
 
-    // Remplace par ton vrai topic ntfy
-    const NTFY_TOPIC = "ayman-date-4k9x2m7p-heart-2026";
+<script>
+const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+const playArea = document.getElementById("playArea");
+const finalScreen = document.getElementById("finalScreen");
+const questionScreen = document.getElementById("questionScreen");
 
-    let alreadySent = false;
-    let noClickCount = 0;
-    let noScale = 1;
+const NTFY_TOPIC = "ayman-date-x7Kp92LmQ-heart-2026";
 
-    function getSafeBounds() {
-      const areaRect = playArea.getBoundingClientRect();
-      const btnRect = noBtn.getBoundingClientRect();
+let noClickCount = 0;
 
-      const maxX = Math.max(0, areaRect.width - btnRect.width - 8);
-      const maxY = Math.max(0, areaRect.height - btnRect.height - 8);
+function moveNoButton() {
+  const rect = playArea.getBoundingClientRect();
+  const maxX = rect.width - noBtn.offsetWidth;
+  const maxY = rect.height - noBtn.offsetHeight;
 
-      return { maxX, maxY };
-    }
+  noBtn.style.left = Math.random() * maxX + "px";
+  noBtn.style.top = Math.random() * maxY + "px";
+}
 
-    function moveNoButton() {
-      const { maxX, maxY } = getSafeBounds();
+function shrinkNo() {
+  noClickCount++;
+  let scale = Math.max(0.2, 1 - noClickCount * 0.15);
+  noBtn.style.transform = `scale(${scale})`;
+}
 
-      const randomX = Math.random() * maxX;
-      const randomY = Math.random() * maxY;
+noBtn.addEventListener("pointerdown", (e) => {
+  e.preventDefault();
+  shrinkNo();
+  moveNoButton();
+});
 
-      noBtn.style.left = `${randomX}px`;
-      noBtn.style.top = `${randomY}px`;
-    }
+yesBtn.addEventListener("click", async () => {
 
-    function shrinkNoButton() {
-      noClickCount++;
+  // CONFETTI BURST
+  confetti({
+    particleCount: 120,
+    spread: 70,
+    origin: { y: 0.6 }
+  });
 
-      noScale = Math.max(0.22, 1 - noClickCount * 0.12);
-      noBtn.style.transform = `scale(${noScale})`;
+  // CONFETTI CONTINU
+  let duration = 2000;
+  let end = Date.now() + duration;
 
-      const fontSize = Math.max(0.55, 1 - noClickCount * 0.07);
-      noBtn.style.fontSize = `${fontSize}rem`;
-
-      const padY = Math.max(4, 14 - noClickCount * 1.3);
-      const padX = Math.max(8, 26 - noClickCount * 2.2);
-      noBtn.style.padding = `${padY}px ${padX}px`;
-    }
-
-    function dodgeNo(e) {
-      e.preventDefault();
-      shrinkNoButton();
-      requestAnimationFrame(moveNoButton);
-    }
-
-    noBtn.addEventListener("pointerdown", dodgeNo);
-
-    noBtn.addEventListener("click", (e) => {
-      e.preventDefault();
+  (function frame() {
+    confetti({
+      particleCount: 5,
+      angle: 60,
+      spread: 55,
+      origin: { x: 0 }
+    });
+    confetti({
+      particleCount: 5,
+      angle: 120,
+      spread: 55,
+      origin: { x: 1 }
     });
 
-    noBtn.addEventListener("touchstart", dodgeNo, { passive: false });
+    if (Date.now() < end) {
+      requestAnimationFrame(frame);
+    }
+  })();
 
-    noBtn.addEventListener("focus", () => {
-      noBtn.blur();
-      shrinkNoButton();
-      moveNoButton();
+  // notif ntfy
+  try {
+    await fetch(`https://ntfy.sh/${NTFY_TOPIC}`, {
+      method: "POST",
+      body: "Elle a cliqué sur Oui 🎉"
     });
+  } catch (e) {}
 
-    yesBtn.addEventListener("click", async () => {
-      if (alreadySent) return;
-      alreadySent = true;
+  // transition écran
+  setTimeout(() => {
+    questionScreen.style.display = "none";
+    finalScreen.style.display = "block";
+  }, 800);
+});
+</script>
 
-      message.textContent = "Excellent choix 😌";
-
-      try {
-        await fetch(`https://ntfy.sh/${NTFY_TOPIC}`, {
-          method: "POST",
-          headers: {
-            "Title": "Elle a cliqué sur Oui",
-            "Priority": "urgent",
-            "Tags": "heart"
-          },
-          body: `Le bouton Oui a été cliqué le ${new Date().toLocaleString("fr-FR")}.`
-        });
-      } catch (err) {
-        console.error("Erreur notif :", err);
-      }
-
-      setTimeout(() => {
-        questionScreen.style.display = "none";
-        finalScreen.style.display = "block";
-      }, 500);
-    });
-
-    window.addEventListener("resize", () => {
-      const { maxX, maxY } = getSafeBounds();
-      const currentLeft = parseFloat(noBtn.style.left || "0");
-      const currentTop = parseFloat(noBtn.style.top || "0");
-
-      noBtn.style.left = `${Math.min(currentLeft, maxX)}px`;
-      noBtn.style.top = `${Math.min(currentTop, maxY)}px`;
-    });
-  </script>
 </body>
 </html>
